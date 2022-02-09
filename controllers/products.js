@@ -1,7 +1,26 @@
 const Product = require("../models/product");
+const Order = require("../models/order");
+
 const createProduct = async (req, res) => {
   const product = await Product.create(req.body);
   res.status(201).json({ product });
+};
+
+const buyProduct = async (req, res) => {
+  const { id: productID } = req.params;
+
+  const product = await Product.findOne({ _id: productID });
+// console.log(product, "producttt");
+  var productBought = new Order({
+    product_id: product._id,
+    product_name: product.name,
+  });
+
+  console.log("product bought details", productBought);
+
+  const result = await Order.create(productBought);
+
+  res.status(200).json({ data: result, msg: "product added", success: true });
 };
 
 const updateProduct = async (req, res) => {
@@ -63,4 +82,5 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
+  buyProduct,
 };

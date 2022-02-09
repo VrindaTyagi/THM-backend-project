@@ -1,9 +1,22 @@
 const Admin = require("../models/admin");
+const Role = require("../models/role");
 
 const register = async (req, res) => {
   const admin = await Admin.create({ ...req.body });
   const token = admin.createJWT();
   res.status(200).json({ msg: "admin created", token });
+  // const role_to_assign = Role.schema.path('roles').enumValues[0]
+  Role.findOneAndUpdate(
+    { currentRole: "user" },
+    { currentRole: "admin" },
+    { new: true,  upsert: true },
+    (err, doc) => {
+      if (err) {
+        console.log("Something wrong when updating data!");
+      }
+      console.log(doc);
+    }
+  );
 };
 
 const login = async (req, res) => {

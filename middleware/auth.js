@@ -1,8 +1,15 @@
 const jwt = require("jsonwebtoken");
 const Admin = require("../models/admin");
+const Role = require("../models/role");
+
 const bcrypt = require("bcryptjs");
 
 const authMiddleware = async (req, res, next) => {
+  // console.log("checkrole middleware");
+  const current = await Role.find({ });
+  if(current[0].currentRole === 'user')
+  res.status(403).send("You are not an admin, please login")
+
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer")) {
     res.status(401).send({ msg: "cannot access, no token provided" });
